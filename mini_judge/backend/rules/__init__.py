@@ -1,0 +1,15 @@
+from typing import Dict, Iterable, Optional
+
+from .brackets import check_unbalanced_brackets
+from .confusable import check_confusable_characters
+from .full_width import check_full_width_symbols
+from .quotes import check_unclosed_quotes
+
+RuleResult = Optional[Dict[str, str]]
+
+
+def apply_rules(code: str) -> Iterable[RuleResult]:
+    yield check_full_width_symbols(code)
+    yield check_unbalanced_brackets(code)
+    yield check_unclosed_quotes(code)
+    yield check_confusable_characters(code)
