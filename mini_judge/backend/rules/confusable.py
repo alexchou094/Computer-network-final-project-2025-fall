@@ -48,10 +48,10 @@ CONFUSABLE_CHARS = {
     '÷': ('/', 'Division sign "÷" (U+00F7) vs slash "/"'),
     
     # Quotation marks
-    ''': ("'", 'Right single quotation mark "'" (U+2019) vs apostrophe "\'" (U+0027)'),
-    ''': ("'", 'Left single quotation mark "'" (U+2018) vs apostrophe "\'" (U+0027)'),
-    '"': ('"', 'Left double quotation mark """ (U+201C) vs quotation mark "\\"" (U+0022)'),
-    '"': ('"', 'Right double quotation mark """ (U+201D) vs quotation mark "\\"" (U+0022)'),
+    ''': ("'", "Right single quotation mark (U+2019) vs apostrophe (U+0027)"),
+    ''': ("'", "Left single quotation mark (U+2018) vs apostrophe (U+0027)"),
+    '"': ('"', "Left double quotation mark (U+201C) vs quotation mark (U+0022)"),
+    '"': ('"', "Right double quotation mark (U+201D) vs quotation mark (U+0022)"),
     
     # Digits that look similar
     'Ⅰ': ('I', 'Roman numeral "Ⅰ" (U+2160) vs Latin "I"'),
