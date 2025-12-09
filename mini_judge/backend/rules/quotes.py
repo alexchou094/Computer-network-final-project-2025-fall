@@ -3,8 +3,10 @@ Rule 3: Quote closure detection
 Detects unclosed quotes in code
 """
 
+from typing import List, Dict, Any
 
-def check_quotes(code: str) -> list[dict]:
+
+def check_quotes(code: str) -> List[Dict[str, Any]]:
     """
     Check for unclosed quotes in code
     

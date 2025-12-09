@@ -3,6 +3,8 @@ Rule 2: Bracket matching detection
 Detects unmatched brackets in code
 """
 
+from typing import List, Dict, Any
+
 
 BRACKET_PAIRS = {
     '(': ')',
@@ -11,7 +13,7 @@ BRACKET_PAIRS = {
 }
 
 
-def check_brackets(code: str) -> list[dict]:
+def check_brackets(code: str) -> List[Dict[str, Any]]:
     """
     Check for unmatched brackets in code
     

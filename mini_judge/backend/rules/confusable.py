@@ -3,6 +3,8 @@ Rule 4: Confusable character detection
 Detects visually similar characters that might cause errors
 """
 
+from typing import List, Dict, Any
+
 
 # Confusable characters mapping
 # Format: confusable -> (intended, description)
@@ -64,7 +66,7 @@ CONFUSABLE_CHARS = {
 }
 
 
-def check_confusable(code: str) -> list[dict]:
+def check_confusable(code: str) -> List[Dict[str, Any]]:
     """
     Check for confusable characters in code
     

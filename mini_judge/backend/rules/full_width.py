@@ -3,6 +3,7 @@ Rule 1: Full-width symbol detection
 Detects full-width symbols that should be half-width in code
 """
 
+from typing import List, Dict, Any
 import re
 
 
@@ -38,7 +39,7 @@ FULL_WIDTH_MAPPINGS = {
 }
 
 
-def check_full_width(code: str) -> list[dict]:
+def check_full_width(code: str) -> List[Dict[str, Any]]:
     """
     Check for full-width symbols in code
     

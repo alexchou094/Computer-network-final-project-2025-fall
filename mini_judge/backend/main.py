@@ -180,7 +180,7 @@ async def run_test_cases_endpoint(request: RunTestCasesRequest):
     """
     try:
         # Convert Pydantic models to dicts
-        test_cases = [tc.dict() for tc in request.test_cases]
+        test_cases = [tc.model_dump() for tc in request.test_cases]
         
         result = runner.run_test_cases(
             request.code,
