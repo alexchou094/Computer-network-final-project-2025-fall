@@ -1,5 +1,7 @@
 from typing import Dict, Optional
 
+RULE_ID = "quotes"
+
 QUOTES = {'"', "'"}
 
 
@@ -23,7 +25,7 @@ def check_unclosed_quotes(code: str) -> Optional[Dict[str, str]]:
 
     if stack:
         return {
-            "rule": "quotes",
+            "rule": RULE_ID,
             "message": "Quote not closed.",
             "detail": f"Unclosed quote starting with '{stack[-1]}'",
         }

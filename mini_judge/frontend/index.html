@@ -87,6 +87,14 @@
       <textarea id="expected" placeholder="Hello World"></textarea>
 
       <div style="margin-top: 0.5rem;">
+        <strong>啟用靜態檢查規則：</strong><br />
+        <label><input type="checkbox" class="rule-checkbox" value="full_width" checked /> 全形符號</label><br />
+        <label><input type="checkbox" class="rule-checkbox" value="brackets" checked /> 括號未成對</label><br />
+        <label><input type="checkbox" class="rule-checkbox" value="quotes" checked /> 引號未封閉</label><br />
+        <label><input type="checkbox" class="rule-checkbox" value="confusable" /> 易混淆字元</label>
+      </div>
+
+      <div style="margin-top: 0.5rem;">
         <button id="analyzeBtn">靜態檢查</button>
         <button id="runBtn">執行程式</button>
       </div>
@@ -122,9 +130,15 @@
 
       async function handleAnalyze() {
         const code = document.getElementById('code').value;
+        const enabledRules = Array.from(document.querySelectorAll('.rule-checkbox:checked'))
+          .map(cb => cb.value);
+
         setLoading(true);
         try {
-          const data = await fetchJson('/api/analyze', { code });
+          const data = await fetchJson('/api/analyze', {
+            code,
+            enabled_rules: enabledRules
+          });
           renderHints(data.hints || []);
         } catch (error) {
           renderHints([{ message: error.message, rule: 'network' }]);

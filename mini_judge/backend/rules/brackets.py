@@ -1,5 +1,7 @@
 from typing import Dict, Optional
 
+RULE_ID = "brackets"
+
 PAIRS = {')': '(', ']': '[', '}': '{'}
 OPENING = set(PAIRS.values())
 
@@ -12,7 +14,7 @@ def check_unbalanced_brackets(code: str) -> Optional[Dict[str, str]]:
         elif char in PAIRS:
             if not stack or stack[-1] != PAIRS[char]:
                 return {
-                    "rule": "brackets",
+                    "rule": RULE_ID,
                     "message": "Unbalanced brackets detected.",
                     "detail": f"Unexpected '{char}' at position {index}",
                 }
@@ -20,7 +22,7 @@ def check_unbalanced_brackets(code: str) -> Optional[Dict[str, str]]:
 
     if stack:
         return {
-            "rule": "brackets",
+            "rule": RULE_ID,
             "message": "Bracket not closed.",
             "detail": f"Missing closing bracket for '{stack[-1]}'",
         }
