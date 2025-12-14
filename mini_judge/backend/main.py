@@ -2,6 +2,8 @@ import os
 from flask import send_from_directory
 from flask import Flask, jsonify, request
 
+from .rules import RULES
+
 from .analyzer import analyze_code
 from .runner import run_submission
 
@@ -34,6 +36,16 @@ def create_app() -> Flask:
     @app.get("/api/health")
     def health():
         return jsonify({"status": "ok"})
+
+    @app.get("/api/rules")
+    def list_rules():
+        return jsonify({
+            rule_id: {
+                "description": getattr(rule, "RULE_DESCRIPTION", ""),
+                "enabled": True
+            }
+            for rule_id, rule in RULES.items()
+        })
 
     @app.get("/")
     def serve_index():
