@@ -74,6 +74,27 @@
         border-radius: 6px;
         margin-bottom: 0.5rem;
       }
+
+      .rule-stats-list {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .rule-stats-item {
+        background: #ecfeff;
+        border: 1px solid #67e8f9;
+        color: #164e63;
+        padding: 0.5rem 0.75rem;
+        border-radius: 6px;
+        margin-bottom: 0.4rem;
+      }
+
+      .rule-desc {
+        font-size: 0.85rem;
+        color: #6b7280; /* gray */
+        margin-left: 1.6rem;
+        margin-bottom: 0.4rem;
+      }
     </style>
   </head>
   <body>
@@ -88,10 +109,26 @@
 
       <div style="margin-top: 0.5rem;">
         <strong>啟用靜態檢查規則：</strong><br />
-        <label><input type="checkbox" class="rule-checkbox" value="full_width" checked /> 全形符號</label><br />
-        <label><input type="checkbox" class="rule-checkbox" value="brackets" checked /> 括號未成對</label><br />
-        <label><input type="checkbox" class="rule-checkbox" value="quotes" checked /> 引號未封閉</label><br />
-        <label><input type="checkbox" class="rule-checkbox" value="confusable" /> 易混淆字元</label>
+
+        <label>
+          <input type="checkbox" class="rule-checkbox" value="full_width" checked /> 全形符號
+        </label>
+        <div class="rule-desc">全形符號（Full-width characters）</div>
+
+        <label>
+          <input type="checkbox" class="rule-checkbox" value="brackets" checked /> 括號未成對
+        </label>
+        <div class="rule-desc">括號未成對（Unbalanced brackets）</div>
+
+        <label>
+          <input type="checkbox" class="rule-checkbox" value="quotes" checked /> 引號未封閉
+        </label>
+        <div class="rule-desc">引號未封閉（Unclosed quotes）</div>
+
+        <label>
+          <input type="checkbox" class="rule-checkbox" value="confusable" /> 易混淆字元
+        </label>
+        <div class="rule-desc">易混淆字元（Visually confusable characters）</div>
       </div>
 
       <div style="margin-top: 0.5rem;">
@@ -103,6 +140,11 @@
     <div class="panel">
       <h3>智慧提示</h3>
       <ul id="hints" class="hint-list"></ul>
+    </div>
+
+    <div class="panel">
+      <h3>Rule 統計</h3>
+      <ul id="ruleStats" class="rule-stats-list"></ul>
     </div>
 
     <div class="panel">
@@ -128,6 +170,13 @@
         document.getElementById('runBtn').disabled = isLoading;
       }
 
+      const RULE_DESCRIPTIONS = {
+        full_width: "全形符號（Full-width characters）",
+        brackets: "括號未成對（Unbalanced brackets）",
+        quotes: "引號未封閉（Unclosed quotes）",
+        confusable: "易混淆字元（Visually confusable characters）",
+      };
+
       async function handleAnalyze() {
         const code = document.getElementById('code').value;
         const enabledRules = Array.from(document.querySelectorAll('.rule-checkbox:checked'))
@@ -140,6 +189,7 @@
             enabled_rules: enabledRules
           });
           renderHints(data.hints || []);
+          renderRuleStats(data.stats || {});
         } catch (error) {
           renderHints([{ message: error.message, rule: 'network' }]);
         } finally {
@@ -205,6 +255,27 @@
           }
         }
         container.textContent = output.trim();
+      }
+
+      function renderRuleStats(stats) {
+        const list = document.getElementById('ruleStats');
+        list.innerHTML = '';
+
+        if (!stats || Object.keys(stats).length === 0) {
+          const li = document.createElement('li');
+          li.className = 'rule-stats-item';
+          li.textContent = '沒有觸發任何規則';
+          list.appendChild(li);
+          return;
+        }
+
+        for (const [rule, count] of Object.entries(stats)) {
+          const li = document.createElement('li');
+          li.className = 'rule-stats-item';
+          const desc = RULE_DESCRIPTIONS[rule] || rule;
+          li.textContent = `${desc}：${count}`;
+          list.appendChild(li);
+        }
       }
 
       document.getElementById('analyzeBtn').addEventListener('click', handleAnalyze);

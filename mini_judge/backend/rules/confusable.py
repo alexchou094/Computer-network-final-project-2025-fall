@@ -1,6 +1,7 @@
 from typing import Dict, Optional
 
 RULE_ID = "confusable"
+RULE_DESCRIPTION = "Check for confusable unicode characters."
 
 CONFUSABLE = {
     "；": ";",

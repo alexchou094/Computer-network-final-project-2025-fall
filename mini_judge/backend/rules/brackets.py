@@ -1,6 +1,7 @@
 from typing import Dict, Optional
 
 RULE_ID = "brackets"
+RULE_DESCRIPTION = "Check for unmatched brackets."
 
 PAIRS = {')': '(', ']': '[', '}': '{'}
 OPENING = set(PAIRS.values())

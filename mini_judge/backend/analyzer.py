@@ -1,4 +1,5 @@
 from typing import Dict, List, Optional
+from collections import Counter
 
 from .rules import apply_rules
 
@@ -39,7 +40,7 @@ class Hint:
 def analyze_code(
     code: str,
     enabled_rules: Optional[List[str]] = None,
-) -> List[Dict[str, str]]:
+) -> Dict[str, object]:
     """
     Run static analysis rules against the submitted code.
 
@@ -76,4 +77,9 @@ def analyze_code(
 
         hints.append(Hint(**result))
 
-    return [hint.to_dict() for hint in hints]
+    rule_stats = Counter(hint.rule for hint in hints)
+
+    return {
+        "hints": [hint.to_dict() for hint in hints],
+        "stats": dict(rule_stats),
+    }

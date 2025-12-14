@@ -1,6 +1,7 @@
 from typing import Dict, Optional
 
 RULE_ID = "quotes"
+RULE_DESCRIPTION = "Check for unclosed quotes."
 
 QUOTES = {'"', "'"}
 
