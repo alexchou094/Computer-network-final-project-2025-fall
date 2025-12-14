@@ -34,6 +34,8 @@
         border: 1px solid #ccc;
         padding: 0.5rem;
         box-sizing: border-box;
+        resize: both;
+        max-width: 100%;
       }
 
       button {
@@ -104,6 +106,9 @@
       <label for="code">程式碼</label>
       <textarea id="code" placeholder="print('Hello World')"></textarea>
 
+      <label for="expectedInput" style="display: block; margin-top: 0.5rem;">預期輸入（可選）</label>
+      <textarea id="expectedInput" placeholder="以換行分隔的輸入，例如：&#10;3&#10;1 2 3"></textarea>
+
       <label for="expected" style="display: block; margin-top: 0.5rem;">預期輸出（可選）</label>
       <textarea id="expected" placeholder="Hello World"></textarea>
 
@@ -121,13 +126,13 @@
     </div>
 
     <div class="panel">
-      <h3>Rule 統計</h3>
-      <ul id="ruleStats" class="rule-stats-list"></ul>
+      <h3>執行結果</h3>
+      <div id="runResult" class="results">尚未執行</div>
     </div>
 
     <div class="panel">
-      <h3>執行結果</h3>
-      <div id="runResult" class="results">尚未執行</div>
+      <h3>Rule 統計</h3>
+      <ul id="ruleStats" class="rule-stats-list"></ul>
     </div>
 
     <script>
@@ -213,10 +218,11 @@
 
       async function handleRun() {
         const code = document.getElementById('code').value;
+        const expectedInput = document.getElementById('expectedInput').value || undefined;
         const expectedOutput = document.getElementById('expected').value || undefined;
         setLoading(true);
         try {
-          const data = await fetchJson('/api/run', { code, expectedOutput });
+          const data = await fetchJson('/api/run', { code, expectedInput, expectedOutput });
           renderRunResult(data);
         } catch (error) {
           console.error('[Run Error]', error);

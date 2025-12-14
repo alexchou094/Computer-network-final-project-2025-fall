@@ -30,7 +30,8 @@ def create_app() -> Flask:
         payload = request.get_json(force=True, silent=True) or {}
         code = payload.get("code", "")
         expected_output = payload.get("expectedOutput")
-        result = run_submission(code, expected_output)
+        expected_input = payload.get("expectedInput")
+        result = run_submission(code, expected_output, expected_input)
         return jsonify(result)
 
     @app.get("/api/health")

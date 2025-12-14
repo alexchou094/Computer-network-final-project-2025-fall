@@ -4,7 +4,11 @@ from pathlib import Path
 from typing import Dict, Optional
 
 
-def run_submission(code: str, expected_output: Optional[str] = None) -> Dict[str, object]:
+def run_submission(
+    code: str,
+    expected_output: Optional[str] = None,
+    expected_input: Optional[str] = None,
+) -> Dict[str, object]:
     """
     Execute submitted Python code in a temporary file and optionally compare output.
     This is a simplified runner intended for local demonstration only.
@@ -24,6 +28,7 @@ def run_submission(code: str, expected_output: Optional[str] = None) -> Dict[str
                 text=True,
                 timeout=5,
                 check=False,
+                input=expected_input,
             )
         except subprocess.TimeoutExpired:
             return {"status": "error", "message": "Execution timed out."}
