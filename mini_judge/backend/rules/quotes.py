@@ -1,6 +1,7 @@
 from typing import Dict, Optional
 
 RULE_ID = "quotes"
+RULE_ID_zh = "引號未封閉"
 RULE_DESCRIPTION = "Check for unclosed quotes."
 
 QUOTES = {'"', "'"}

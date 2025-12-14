@@ -107,29 +107,7 @@
       <label for="expected" style="display: block; margin-top: 0.5rem;">預期輸出（可選）</label>
       <textarea id="expected" placeholder="Hello World"></textarea>
 
-      <div style="margin-top: 0.5rem;">
-        <strong>啟用靜態檢查規則：</strong><br />
-
-        <label>
-          <input type="checkbox" class="rule-checkbox" value="full_width" checked /> 全形符號
-        </label>
-        <div class="rule-desc">全形符號（Full-width characters）</div>
-
-        <label>
-          <input type="checkbox" class="rule-checkbox" value="brackets" checked /> 括號未成對
-        </label>
-        <div class="rule-desc">括號未成對（Unbalanced brackets）</div>
-
-        <label>
-          <input type="checkbox" class="rule-checkbox" value="quotes" checked /> 引號未封閉
-        </label>
-        <div class="rule-desc">引號未封閉（Unclosed quotes）</div>
-
-        <label>
-          <input type="checkbox" class="rule-checkbox" value="confusable" /> 易混淆字元
-        </label>
-        <div class="rule-desc">易混淆字元（Visually confusable characters）</div>
-      </div>
+      <div id="ruleList" style="margin-top: 0.5rem;"></div>
 
       <div style="margin-top: 0.5rem;">
         <button id="analyzeBtn">靜態檢查</button>
@@ -170,12 +148,31 @@
         document.getElementById('runBtn').disabled = isLoading;
       }
 
-      const RULE_DESCRIPTIONS = {
-        full_width: "全形符號（Full-width characters）",
-        brackets: "括號未成對（Unbalanced brackets）",
-        quotes: "引號未封閉（Unclosed quotes）",
-        confusable: "易混淆字元（Visually confusable characters）",
-      };
+
+      // Dynamically load rules from backend
+      async function loadRules() {
+        try {
+          const data = await fetch('/api/rules').then(r => r.json());
+          const container = document.getElementById('ruleList');
+          container.innerHTML = '<strong>啟用靜態檢查規則：</strong><br />';
+
+          Object.entries(data).forEach(([ruleId, meta]) => {
+            const label = document.createElement('label');
+            label.innerHTML = `
+              <input type="checkbox" class="rule-checkbox" value="${ruleId}" ${meta.enabled ? 'checked' : ''} /> ${ruleId}
+            `;
+
+            const desc = document.createElement('div');
+            desc.className = 'rule-desc';
+            desc.textContent = meta.description || '';
+
+            container.appendChild(label);
+            container.appendChild(desc);
+          });
+        } catch (e) {
+          console.warn('Failed to load rules from backend.', e);
+        }
+      }
 
       async function handleAnalyze() {
         const code = document.getElementById('code').value;
@@ -191,7 +188,24 @@
           renderHints(data.hints || []);
           renderRuleStats(data.stats || {});
         } catch (error) {
-          renderHints([{ message: error.message, rule: 'network' }]);
+          console.error('[Analyze Error]', error);
+
+          let message = 'Unknown error';
+
+          if (error instanceof TypeError) {
+            // Network / CORS / connection refused
+            message = 'Network or CORS error: failed to reach backend';
+          } else if (error.message) {
+            message = error.message;
+          }
+
+          renderHints([
+            {
+              rule: 'network',
+              message: message,
+              detail: 'Check browser console and backend logs for details.'
+            }
+          ]);
         } finally {
           setLoading(false);
         }
@@ -205,7 +219,20 @@
           const data = await fetchJson('/api/run', { code, expectedOutput });
           renderRunResult(data);
         } catch (error) {
-          renderRunResult({ status: 'error', message: error.message });
+          console.error('[Run Error]', error);
+
+          let message = 'Unknown error';
+
+          if (error instanceof TypeError) {
+            message = 'Network or CORS error: failed to reach backend';
+          } else if (error.message) {
+            message = error.message;
+          }
+
+          renderRunResult({
+            status: 'error',
+            message: message + '\nCheck browser console and backend logs for details.'
+          });
         } finally {
           setLoading(false);
         }
@@ -269,17 +296,28 @@
           return;
         }
 
+        // Fallback: just show rule id if no description loaded
         for (const [rule, count] of Object.entries(stats)) {
           const li = document.createElement('li');
           li.className = 'rule-stats-item';
-          const desc = RULE_DESCRIPTIONS[rule] || rule;
-          li.textContent = `${desc}：${count}`;
+          // Try to get the description from the DOM
+          let desc = rule;
+          const cb = document.querySelector(`.rule-checkbox[value="${rule}"]`);
+          if (cb) {
+            const descEl = cb.parentElement.nextElementSibling;
+            if (descEl && descEl.textContent) {
+              desc = descEl.textContent;
+            }
+          }
+          li.textContent = `[${rule}]:${count}`;
           list.appendChild(li);
         }
       }
 
       document.getElementById('analyzeBtn').addEventListener('click', handleAnalyze);
       document.getElementById('runBtn').addEventListener('click', handleRun);
+
+      loadRules();
     </script>
   </body>
 </html>
